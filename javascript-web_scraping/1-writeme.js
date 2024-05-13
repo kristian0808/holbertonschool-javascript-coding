@@ -1,6 +1,11 @@
 #!/usr/bin/node
-const request = require('request');
-request.get(process.argv[2], (error, response, body) => {
-  if (error) throw error;
-  console.log('code:', response.statusCode);
+
+const fs = require('fs');
+const fileName = process.argv[2];
+const textToTransform = process.argv[3];
+
+fs.writeFile(fileName, textToTransform, err => {
+  if (err) {
+    console.log(err);
+  }
 });
