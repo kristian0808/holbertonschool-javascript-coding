@@ -2,30 +2,33 @@ const http = require('http');
 const url = require('url');
 const countStudents = require('./3-read_file_async');
 
-const app = http.createServer((request, result) => {
+const app = http.createServer((request, response) => {
     const path = url.parse(request.url).pathname;
+
     if (path === '/') {
-        result.writeHead(200, { 'Content-Type': 'text/plain' });
-        result.end('Hello Holberton School!');
+        response.writeHead(200, { 'Content-Type': 'text/plain' });
+        response.end('Hello Holberton School!');
     } else if (path === '/students') {
-        result.writeHead(200, { 'Content-Type': 'text/plain' });
-        result.write('This is the list of our students\n');
+        response.writeHead(200, { 'Content-Type': 'text/plain' });
+        response.write('This is the list of our students\n');
+
         countStudents(process.argv[2])
             .then((data) => {
-                result.write(`Number of students: ${data.students.length}\n`);
+                response.write(`Number of students: ${data.students.length}\n`);
                 for (const field in data.subjects) {
                     if (Object.prototype.hasOwnProperty.call(data.subjects, field)) {
-                        result.write(`Number of students in ${field}: ${data.subjects[field].length}. List: ${data.subjects[field].join(', ')}\n`);
+                        response.write(`Number of students in ${field}: ${data.subjects[field].length}. List: ${data.subjects[field].join(', ')}\n`);
                     }
                 }
-                result.end();
+                response.end();
             })
             .catch((error) => {
-                result.end(error.message);
+                response.write(`Cannot load the database\n`);
+                response.end();
             });
     } else {
-        result.writeHead(404, { 'Content-Type': 'text/plain' });
-        result.end('Not Found');
+        response.writeHead(404, { 'Content-Type': 'text/plain' });
+        response.end('Not Found');
     }
 });
 
