@@ -2,28 +2,30 @@ const http = require('http');
 const url = require('url');
 const countStudents = require('./3-read_file_async');
 
-const app = http.createServer((req, res) => {
-    const path = url.parse(req.url).pathname;
-
+const app = http.createServer((request, result) => {
+    const path = url.parse(request.url).pathname;
     if (path === '/') {
-        res.end('Hello Holberton School!');
+        result.writeHead(200, { 'Content-Type': 'text/plain' });
+        result.end('Hello Holberton School!');
     } else if (path === '/students') {
-        res.write('This is the list of our students\n'); // Initial line
-
+        result.writeHead(200, { 'Content-Type': 'text/plain' });
+        result.write('This is the list of our students\n');
         countStudents(process.argv[2])
             .then((data) => {
-                // No newline here, since it's already on the initial line
-                res.write(`Number of students: ${data.students.length}\n`);
+                result.write(`Number of students: ${data.students.length}\n`);
                 for (const field in data.subjects) {
-                    if (data.subjects.hasOwnProperty(field)) {
-                        res.write(`Number of students in ${field}: ${data.subjects[field].length}. List: ${data.subjects[field].join(', ')}\n`);
+                    if (Object.prototype.hasOwnProperty.call(data.subjects, field)) {
+                        result.write(`Number of students in ${field}: ${data.subjects[field].length}. List: ${data.subjects[field].join(', ')}\n`);
                     }
                 }
-                res.end();
+                result.end();
             })
             .catch((error) => {
-                res.end(error.message);
+                result.end(error.message);
             });
+    } else {
+        result.writeHead(404, { 'Content-Type': 'text/plain' });
+        result.end('Not Found');
     }
 });
 
