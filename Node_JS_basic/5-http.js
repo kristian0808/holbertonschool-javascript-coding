@@ -23,7 +23,7 @@ const app = http.createServer((request, response) => {
                 response.end();
             })
             .catch((error) => {
-                response.write(`Cannot load the database\n`);
+                response.write('Cannot load the database\n');
                 response.end();
             });
     } else {
